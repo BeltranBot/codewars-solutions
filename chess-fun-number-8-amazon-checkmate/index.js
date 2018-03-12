@@ -1,3 +1,4 @@
+https://www.codewars.com/kata/chess-fun-number-8-amazon-checkmate/
 const INVALID = 0
 const SAFE_SQUARE = 1
 const CHECKMATE = 2
