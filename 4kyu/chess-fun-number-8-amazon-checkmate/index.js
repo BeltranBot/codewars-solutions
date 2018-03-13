@@ -1,4 +1,4 @@
-https://www.codewars.com/kata/chess-fun-number-8-amazon-checkmate/
+// www.codewars.com/kata/chess-fun-number-8-amazon-checkmate/
 const INVALID = 0
 const SAFE_SQUARE = 1
 const CHECKMATE = 2
@@ -18,7 +18,7 @@ class Board {
         this._grid = this.initializeGrid(this._size)
     }
 
-    initializeGrid(n, v = SAFE_SQUARE) {
+    initializeGrid(n, v = SAFE_SQUARE) {http://www.codewars.com/kata/credit-card-issuer-checking
         let grid = [...new Array(n)].map(x => [...new Array(n)])
         for (let i = 0; i < n; i++) {
             for (let j = 0; j < n; j++) {
