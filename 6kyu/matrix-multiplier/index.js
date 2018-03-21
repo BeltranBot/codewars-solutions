@@ -1,5 +1,6 @@
 // http://www.codewars.com/kata/matrix-multiplier/
-function matrix_multiplication (a, b) {
+function getMatrixProduct (a, b) {
+    if (a[0].length != b.length) return -1
     let x = a.length
     let y = b[0].length
     let z = b.length
@@ -29,4 +30,4 @@ const b = [
     [3, 2, 1]
 ]
 
-console.log(matrix_multiplication(a, b))
+console.log(getMatrixProduct(a, b))

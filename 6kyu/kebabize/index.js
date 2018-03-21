@@ -4,7 +4,7 @@ const LOWER_Z = 'z'.charCodeAt(0)
 const UPPER_A = 'A'.charCodeAt(0)
 const UPPER_Z = 'Z'.charCodeAt(0)
 
-function kebabize (str) {
+function kebabize_old (str) {
     let ans = ''
     for (const letter of str) {
         let n = letter.charCodeAt(0)
@@ -20,6 +20,12 @@ function kebabize (str) {
     }
 
     return ans
+}
+
+function kebabize (str) {
+    return str.replace(/[^a-z]/, '')
+            .replace(/^[A-Z]/, c => c.toLowerCase())
+            .replace(/[A-Z]/, c => '-' + c.toLowerCase())
 }
 
 // console.log(kebabize('myCamelCasedString'))
