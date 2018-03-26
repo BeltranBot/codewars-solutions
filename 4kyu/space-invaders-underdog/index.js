@@ -40,7 +40,7 @@ class Alien {
             // console.log('cuatro')
             y = speed - 1
         }
-        return [x + this.x, y, (even) ? this.speed : -1 * this.speed]
+        return [x + this.x, y, even ? this.speed : -1 * this.speed]
     }
 
 }
@@ -61,13 +61,28 @@ class Square {
         return this.aliens.length == 0
     }
 
+    getAlien () {
+        if (this.isEmpty()) return null
+
+    }
+
 }
 
 class Grid {
 
     constructor (h, w, a = []) {
         this.w = w
+        this.h = h
         this.matrix = this.initializeMatrix(h, w, a)
+        this.aliens = 0
+    }
+
+    addAlien () {
+        this.aliens++
+    }
+
+    removeAlien () {
+        this.aliens--
     }
 
     initializeMatrix (h, w, a = []) {
@@ -78,6 +93,7 @@ class Grid {
                 matrix[i][j] = new Square(i, j)
                 if (a[i] && a[i][j]) {
                     matrix[i][j].addAlien(a[i][j])
+                    this.addAlien()
                 }
             }            
         }
@@ -91,6 +107,8 @@ class Grid {
                 if (!this.matrix[i][j].isEmpty()) {
                     for (let alien of this.matrix[i][j].aliens) {
                         let [x, y, speed] = alien.nextPosition(this.w)
+                        console.log 
+                        if (x >= this.h) return null
                         grid.matrix[x][y].addAlien(speed)
                     }
                 }
@@ -129,13 +147,26 @@ function blastSequence (aliens, position) {
     // let alien = new Alien(0, 3, -2)
     // let alien = new Alien(0, 3, -30)
     // console.log(alien.nextPosition(width))
-    let grid = new Grid(height, width, aliens)
-    grid.print()
-    let arr = [grid]
+    let arr = [new Grid(height, width, aliens)]
 
-    for (let i = 0; i < 5; i++) {
+    // for (let i = 0; i < 10; i++) {
+    //     arr.push(arr[arr.length - 1].step())
+    //     if (arr[arr.length - 1]) {
+    //         arr[arr.length - 1].print()
+    //     } else {
+    //         console.log('out of bounds')
+    //         break
+    //     }            
+    // }
+    let i = 0
+    let shots = []
+    while (true) {
         arr.push(arr[arr.length - 1].step())
-        arr[arr.length - 1].print()
+        if (arr[arr.length - 1]) {
+
+        } else {
+            return null
+        }
     }
 
     // let alien = new Alien(1, 4, -7)
