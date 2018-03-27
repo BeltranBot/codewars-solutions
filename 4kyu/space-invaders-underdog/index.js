@@ -114,7 +114,7 @@ class Grid {
                 if (!this.matrix[i][j].isEmpty()) {
                     for (let alien of this.matrix[i][j].aliens) {
                         let [x, y, speed] = alien.nextPosition(this.w)
-                        if (x > this.h) return null
+                        if (x >= this.h) return null
                         grid.matrix[x][y].addAlien(speed)
                         grid.addAlien()
                     }
@@ -151,9 +151,8 @@ class Grid {
                         colors.red(Math.abs(s)) :
                         colors.cyan(Math.abs(s))
                 } else {
-                    let s =
-                        this.matrix[i][j]
-                        .sortAliens()[this.matrix[i][j].aliens.length - 1].speed
+                    this.matrix[i][j].sortAliens()
+                    let s = this.matrix[i][j].aliens[this.matrix[i][j].aliens.length - 1].speed
                     output += (s < 0) ?
                         colors.grey(Math.abs(s)) :
                         colors.green(Math.abs(s))
@@ -166,7 +165,7 @@ class Grid {
     }
 
     checkCollision (p) {
-        for (let i = this.matrix.length - 1; i >= 0; i--) {
+        for (let i = this.matrix.length - 2; i >= 0; i--) {
             let square = this.matrix[i][p[1]]
             if (square.isEmpty()) continue
             if (square.aliens.length == 1) {
@@ -193,13 +192,11 @@ function blastSequence (aliens, position) {
         aliens.length : position[0] + 1
     let width = aliens[0].length > position[1] + 1 ?
         aliens[0].length : position[1] + 1
-    let arr = [new Grid(height, width, aliens)]
+    let grid = new Grid(height, width, aliens)
     let i = 0
     let shots = []
     while (true) {
-        // console.log('time', i)
-        arr.push(arr[arr.length - 1].step())
-        let grid = arr[arr.length - 1]
+        grid = grid.step()
         if (grid) {
             // grid.printColors()
             if (grid.checkCollision(position)) shots.push(i)
@@ -211,8 +208,13 @@ function blastSequence (aliens, position) {
     }
 }
 
-const alienWave = [[3, 1, 2, -2, 2, 3, 6, -3, 7, 1]];
-const position = [6, 4];
+// const alienWave = [[3, 1, 2, -2, 2, 3, 6, -3, 7, 1]];
+// const position = [6, 4];
+
+const alienWave = [
+    [ -9, 8, -7, 6, -5, 4, -3, 2, -1, 1, -2, 3, -4, 5, -6, 7, -8, 9, 10 ]
+]
+const position = [ 10, 6 ]
 
 let ans = blastSequence(alienWave, position)
 console.log(ans)
