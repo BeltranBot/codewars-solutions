@@ -1,4 +1,5 @@
-function correct(string) {
+// http://www.codewars.com/kata/correct-the-mistakes-of-the-character-recognition-software
+function correct (string) {
     return string
         .replace(/5/g, 'S')
         .replace(/0/g, 'O')      
