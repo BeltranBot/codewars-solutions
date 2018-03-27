@@ -1,4 +1,5 @@
 // http://www.codewars.com/kata/space-invaders-underdog
+const colors = require('colors/safe')
 
 class Alien {
 
@@ -15,14 +16,12 @@ class Alien {
                 if (Math.abs(speed) > this.y) {
                     speed += this.y
                 } else {
-                    // console.log('uno')
                     return [this.x, this.y + speed, speed]
                 }
             } else if (speed > 0) {
                 if (speed + this.y > w - 1) {
                     speed -= w - 1 - this.y
                 } else {
-                    // console.log('dos')
                     return [this.x, this.y + speed, speed]
                 }
             }
@@ -35,9 +34,7 @@ class Alien {
 
         if (this.speed < 0 && even || this.speed > 0 && !even) {
             y = w - speed
-            // console.log('tres')
         } else if (this.speed < 0 && !even || this.speed > 0 && even) {
-            // console.log('cuatro')
             y = speed - 1
         }
         return [x + this.x, y, even ? this.speed : -1 * this.speed]
@@ -61,9 +58,19 @@ class Square {
         return this.aliens.length == 0
     }
 
-    getAlien () {
-        if (this.isEmpty()) return null
+    removeAlien (i) {
+        this.aliens.splice(i, 1)
+    }
 
+    sortAliens () {
+        this.aliens.sort((a,  b) => {
+            if (Math.abs(a.speed) > Math.abs(b.speed)) {
+                return 1
+            } else if (Math.abs(a.speed) < Math.abs(b.speed)) {
+                return -1
+            }
+            return (a.speed >= b.speed) ? 1 : (a.speed == b.speed) ? 0 : -1
+        })
     }
 
 }
@@ -73,8 +80,8 @@ class Grid {
     constructor (h, w, a = []) {
         this.w = w
         this.h = h
-        this.matrix = this.initializeMatrix(h, w, a)
         this.aliens = 0
+        this.matrix = this.initializeMatrix(h, w, a)
     }
 
     addAlien () {
@@ -91,7 +98,7 @@ class Grid {
             matrix[i] = new Array(w)
             for (let j = 0; j < matrix[i].length; j++) {
                 matrix[i][j] = new Square(i, j)
-                if (a[i] && a[i][j]) {
+                if (a[i] && a[i][j] && a[i][j] != 0) {
                     matrix[i][j].addAlien(a[i][j])
                     this.addAlien()
                 }
@@ -107,9 +114,9 @@ class Grid {
                 if (!this.matrix[i][j].isEmpty()) {
                     for (let alien of this.matrix[i][j].aliens) {
                         let [x, y, speed] = alien.nextPosition(this.w)
-                        console.log 
-                        if (x >= this.h) return null
+                        if (x > this.h) return null
                         grid.matrix[x][y].addAlien(speed)
+                        grid.addAlien()
                     }
                 }
             }
@@ -132,6 +139,53 @@ class Grid {
         console.log()
     }
 
+    printColors () {
+        for (let i = 0; i < this.matrix.length; i++) {
+            let output = ''
+            for (let j = 0; j < this.matrix[i].length; j++) {
+                if (this.matrix[i][j].isEmpty()) {
+                    output += colors.white(0)
+                } else if (this.matrix[i][j].aliens.length == 1) {
+                    let s = this.matrix[i][j].aliens[0].speed
+                    output += (s < 0) ?
+                        colors.red(Math.abs(s)) :
+                        colors.cyan(Math.abs(s))
+                } else {
+                    let s =
+                        this.matrix[i][j]
+                        .sortAliens()[this.matrix[i][j].aliens.length - 1].speed
+                    output += (s < 0) ?
+                        colors.grey(Math.abs(s)) :
+                        colors.green(Math.abs(s))
+                }
+                output += ' '
+            }            
+            console.log(output)
+        }
+        console.log()
+    }
+
+    checkCollision (p) {
+        for (let i = this.matrix.length - 1; i >= 0; i--) {
+            let square = this.matrix[i][p[1]]
+            if (square.isEmpty()) continue
+            if (square.aliens.length == 1) {
+                square.removeAlien(0)
+                this.removeAlien()
+                return true
+            }
+            square.sortAliens()
+            square.removeAlien(square.aliens.length - 1)
+            this.removeAlien()
+            return true
+        }
+        return false
+    }
+
+    countAliens () {
+        return this.aliens
+    }
+
 }
 
 function blastSequence (aliens, position) {
@@ -139,42 +193,26 @@ function blastSequence (aliens, position) {
         aliens.length : position[0] + 1
     let width = aliens[0].length > position[1] + 1 ?
         aliens[0].length : position[1] + 1
-    
-    // let grid = new Grid(length, width, aliens)
-    // let alien = new Alien(0, 8, 7)
-    // let alien = new Alien(0, 6, 6)
-    // let alien = new Alien(0, 2, 2)
-    // let alien = new Alien(0, 3, -2)
-    // let alien = new Alien(0, 3, -30)
-    // console.log(alien.nextPosition(width))
     let arr = [new Grid(height, width, aliens)]
-
-    // for (let i = 0; i < 10; i++) {
-    //     arr.push(arr[arr.length - 1].step())
-    //     if (arr[arr.length - 1]) {
-    //         arr[arr.length - 1].print()
-    //     } else {
-    //         console.log('out of bounds')
-    //         break
-    //     }            
-    // }
     let i = 0
     let shots = []
     while (true) {
+        // console.log('time', i)
         arr.push(arr[arr.length - 1].step())
-        if (arr[arr.length - 1]) {
-
+        let grid = arr[arr.length - 1]
+        if (grid) {
+            // grid.printColors()
+            if (grid.checkCollision(position)) shots.push(i)
+            if (grid.countAliens() == 0) return shots
         } else {
             return null
         }
+        i++
     }
-
-    // let alien = new Alien(1, 4, -7)
-    // console.log(alien.nextPosition(width))
-
 }
 
 const alienWave = [[3, 1, 2, -2, 2, 3, 6, -3, 7, 1]];
 const position = [6, 4];
 
-blastSequence(alienWave, position)
+let ans = blastSequence(alienWave, position)
+console.log(ans)
