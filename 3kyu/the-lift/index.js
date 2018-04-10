@@ -1,4 +1,4 @@
-//
+// http://www.codewars.com/kata/the-lift/
 
 class Person {
 
@@ -8,7 +8,7 @@ class Person {
     }
 }
 
-class Queue {
+class Q {
 
     constructor (q) {
         this.count = 0
@@ -24,41 +24,30 @@ class Queue {
                 m[i].push(p)
                 this.count++
             }
+            m[i].reverse()
         }
         return m
     }
 
-    removePerson (i) {
-        return this.queue[i].shift()
+    length () {
+        return this.queue.length - 1
     }
 
-    getHighestCall () {
-        for (let i = this.queue.length - 1; i >= 0; i--) {
-            if (this.queue[i].length > 0) {
-                return (this.queue[i].goal_floor > i) ?
-                    this.queue[i].goal_floor : i
-            }
-        }
-        return 0
-    }
-
-    getLowestCall () {
-        for (let i = 0; i < this.queue.length; i++) {
-            if (this.queue[i].length > 0) return i
-        }
-        return 0
+    removePerson (i, j) {
+        let a = this.queue[i].splice(j, 1)[0]
+        return a
     }
 
 }
 
-class Lift {
+class L {
 
     constructor (c, q) {
         this.current_floor = 0
         this.goal_floor = 0
         this.load = []
         this.capacity = c
-        this.q = new Queue(q)
+        this.q = new Q(q)
         this.stops = [0]
         this.dir = false
     }
@@ -72,7 +61,7 @@ class Lift {
     }
 
     removePerson (i) {
-        this.load.slice(i, 1)
+        this.load.splice(i, 1)
         this.q.count--
     }
 
@@ -90,13 +79,13 @@ class Lift {
 
     loadPeople (i) {
         let stopped = false
-        while (this.q.queue[i].length > 0 && !this.isFull()) {
-            if ((this.dir && this.q.queue[i][0].goal_floor > i) ||
-                (!this.dir && this.q.queue[i][0].goal_floor < i)) {
-                if (!stopped) stopped = true
-                this.addPerson(this.q.removePerson(i))
-            }
-        }        
+        for (let j = this.q.queue[i].length - 1; j >= 0; j--) {
+            let a = (this.dir && this.q.queue[i][j].goal_floor > i)
+            let b = (!this.dir && this.q.queue[i][j].goal_floor < i)
+            if (!stopped && (a || b)) stopped = true
+            let c = !this.isFull()
+            if ((a || b) && c) this.addPerson(this.q.removePerson(i, j))
+        }
         return stopped
     }
 
@@ -118,70 +107,57 @@ class Lift {
         return min
     }
 
-
+    addStop (i) {
+        let last = this.stops.length - 1
+        if (this.stops[last] == i) return
+        this.stops.push(i)
+    }
 
     goUp () {
-        this.goal_floor = this.q.getHighestCall()
+        this.goal_floor = this.q.length()
         this.dir = true
         for (let i = this.current_floor; i <= this.goal_floor; i++) {
             let a = this.unloadPeople(i)
             let b = this.loadPeople(i)
-            if (a || b) this.stops.push(i)
+            if ((a || b)) this.addStop(i)
         }
-        this.current_floor = goal
-        let g = this.q.getHighestGoal()
-        this.goal_floor = g > this.goal_floor ? g : this.goal_floor
+        this.current_floor = this.goal_floor
     }
 
     goDown () {
-        let goal = this.q.getLowestCall()
+        this.goal_floor = 0
         this.dir = false
-        for (let i = this.current_floor; i >= goal; i--) {
+        for (let i = this.current_floor; i >= this.goal_floor; i--) {
             let a = this.unloadPeople(i)
             let b = this.loadPeople(i)
-            if (a || b) this.stops.push(i)
+            if ((a || b)) this.addStop(i)
         }
-        this.current_floor = goal
-        let g = this.q.getLowestGoal()
-        this.goal_floor = g < this.goal_floor ? g : this.goal_floor
-    }
-
-    setGoal () {
-        if (this.goal_floor == 0) {
-            this.goal_floor = this.q.getHighestCall()
-        } else if (this.dir) {
-            let g = this.q.getHighestGoal()
-            this.goal_floor = g > this.goal_floor ? g : this.goal_floor
-        } else {
-            this.goal_floor = this.q.getLowestCall()
-        }
+        this.current_floor = this.goal_floor
     }
 
 }
 
 function theLift (q, capacity) {
-    let lift = new Lift(capacity, q)
+    let lift = new L(capacity, q)
     while (lift.q.count != 0) {
-        lift.setGoal()
-        lift.gotoGoal()
-        console.log(lift.load)
-        break
+        if (lift.dir) {
+            lift.goDown()
+        } else {
+            lift.goUp()
+        }
     }
 
-    // if (lift.current_floor != 0) lift.push(0)
+    if (lift.stops[lift.stops.length - 1] != 0) lift.stops.push(0)
 
-    return lift.stops    
+    return lift.stops
 }
 
-var queues = [
-    [], // G
-    [], // 1
-    [5,5,5], // 2
-    [], // 3
-    [], // 4
-    [], // 5
-    [], // 6
+let queues = [
+    [ 1, 1, 2 ],  // g
+    [ 0, 0, 0, 0 ], // 1
+    [ 1, 3 ],  // 2
+    [ 2, 1, 2, 0 ] // 3
 ]
 
-let result = theLift(queues, 5)
+let result = theLift(queues, 2)
 console.log(result)
