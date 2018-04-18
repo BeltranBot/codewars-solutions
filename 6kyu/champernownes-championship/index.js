@@ -3,6 +3,7 @@
 function champernowneDigit (a) {
     if (!Number.isInteger(a) || a <= 0) return NaN
     if (a <= 10) return a - 1
+
     let b = -1
     let c = 0
     let d = 0
