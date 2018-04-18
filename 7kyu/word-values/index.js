@@ -11,6 +11,6 @@ function wordValue (a) {
     return ans
 }
 
-let test = ["codewars","abc","xyz"]
+let test = ["codewars", "abc", "xyz"]
 
-console.log(wordValues(test))
+console.log(wordValue(test))
