@@ -1,0 +1,5 @@
+// http://www.codewars.com/kata/century-from-year
+
+function century (year) {
+    return Math.ceil((year / 100))
+}
