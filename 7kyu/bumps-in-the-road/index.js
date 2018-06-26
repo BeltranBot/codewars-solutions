@@ -2,5 +2,5 @@
 
 const bump = x => {
     return [...x].filter(y => y === 'n').length <= 15 ?
-        'Woohoo!' : "Car dEad"
+        'Woohoo!' : "Car Dead"
 }
