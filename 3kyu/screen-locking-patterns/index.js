@@ -136,7 +136,6 @@ class Node {
         if (count >= goal) return 1
 
         states = this.parent.cloneStates(states)
-        // console.log(states)
 
         let [i, j] = DOTS[this.id]
         
@@ -145,7 +144,6 @@ class Node {
         let neighbors = this._getNeighbors(states)
 
         for (const neighbor of neighbors) {
-            // console.log(this.id, '->', neighbor.id)
             patterns += neighbor.countPatterns(goal, count, states)
         }
 
