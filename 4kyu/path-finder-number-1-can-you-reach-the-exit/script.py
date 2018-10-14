@@ -10,7 +10,6 @@ def path_finder(maze):
         [0, -1],
     ]
 
-    # [GOAL_ROW, GOAL_COL] = [len(grid) - 1, len(grid[0]) - 1]
     [GOAL_ROW, GOAL_COL] = [len(grid) - 1, len(grid[0]) - 1]
 
     node_stack = [[0, 0]]
