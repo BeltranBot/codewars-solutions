@@ -4,25 +4,26 @@ function pathFinder(maze) {
   let grid = maze.split('\n').map(line => line.trim().split(''))
 
   let neighbors = [
-    [0, 1],
-    [0, -1],
-    [1, 0],
     [-1, 0],
+    [0, 1],
+    [1, 0],
+    [0, -1],
   ]
 
   const [GOAL_ROW, GOAL_COL] = [grid.length - 1, grid[0].length - 1]
 
   function searchGoal(grid, current_pos = [0, 0]) {
+    console.log(grid)
     let [cur_row, cur_col] = current_pos
 
     if (cur_row === GOAL_ROW && cur_col === GOAL_COL) return true    
-    if (grid[cur_row][cur_col] === 'W' || grid[cur_row][cur_col] === '') {
+    if (grid[cur_row][cur_col] === 'W' || grid[cur_row][cur_col] === 'X') {
       return false
     }
 
-    grid[cur_row][cur_col] = ''
+    grid[cur_row][cur_col] = 'X'
 
-    for (let [n_col, n_row] of neighbors) {
+    for (let [n_row, n_col] of neighbors) {
       let next_row = cur_row + n_row
       let next_col = cur_col + n_col
 
@@ -38,9 +39,11 @@ function pathFinder(maze) {
 } // end-pathFinder
 
 let test = (
-  `.W.
-  .W.
-  ...`
+  `.W...
+  .W...
+  .W.W.
+  ...W.
+  ...W.`
 )
 
 let ans = pathFinder(test)
