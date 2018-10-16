@@ -25,7 +25,7 @@ class Node():
 
 class Maze():
 
-    def _generate_maze(self, grid):
+    def _generate_maze(self, grid):        
         new_grid = []
 
         for row in range(0, len(grid)):
@@ -39,9 +39,11 @@ class Maze():
         return new_grid
 
     def __init__(self, maze):
-        self.grid = self._generate_maze(
-            list(map(lambda x: list(x), maze.split('\n')))
-        )
+        # self.grid = self._generate_maze(
+        #     list(map(lambda x: list(x), maze.split('\n')))
+        # )
+
+        self.grid = [[Node(row, col, x) for col, x in enumerate(y)] for row, y in enumerate(maze.split("\n"))]
 
     def get_height(self):
         return len(self.grid)
@@ -304,3 +306,8 @@ test3 = '\n'.join([
 
 ans = path_finder(test3)
 print 'solution:', ans, len(test3)
+
+# ans = [[{'row': row, 'col': col, 'value':x} for col, x in enumerate(y)] for row, y in enumerate(test3.split("\n"))]
+# print ans
+
+
